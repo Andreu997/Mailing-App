@@ -67,6 +67,9 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 
 	switch (packetType)
 	{
+	case PacketType::RegisterRequest:
+		onPacketReceivedRegister(socket, stream);
+		break;
 	case PacketType::LoginRequest:
 		onPacketReceivedLogin(socket, stream);
 		break;
@@ -82,15 +85,40 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	}
 }
 
+void ModuleServer::onPacketReceivedRegister(SOCKET socket, const InputMemoryStream & stream)
+{
+	std::string loginName;
+	// TODO3: Deserialize the login username into loginName
+	stream.Read(loginName);
+
+	// Password Hash
+	size_t passHash;
+	stream.Read(passHash);
+
+	// Register the client with this socket with the deserialized username
+	ClientStateInfo & client = getClientStateInfoForSocket(socket);
+	client.loginName = loginName;
+
+	// And password Hash
+	client.passwordHash = passHash;
+}
+
 void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream & stream)
 {
 	std::string loginName;
 	// TODO3: Deserialize the login username into loginName
 	stream.Read(loginName);
 
+	// Password Hash
+	size_t passHash;
+	stream.Read(passHash);
+
 	// Register the client with this socket with the deserialized username
 	ClientStateInfo & client = getClientStateInfoForSocket(socket);
 	client.loginName = loginName;
+
+	// And password Hash
+	client.passwordHash = passHash;
 }
 
 void ModuleServer::onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream & stream)

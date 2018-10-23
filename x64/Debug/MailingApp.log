@@ -1,3 +1,24 @@
-﻿  ModuleClient.cpp
-c:\users\andreusv2\desktop\mailingapp - todo\src\moduleclient.cpp(94): warning C4018: '<': signed/unsigned mismatch
-  MailingApp.vcxproj -> C:\Users\andreusv2\Desktop\MailingApp - TODO\x64\Debug\MailingApp.exe
+﻿  Application.cpp
+  DBConnection.cpp
+c:\users\andreusv2\documents\github\mailing-app\src\database\dbconnection.cpp(195): warning C4267: 'argument': conversion from 'size_t' to 'SQLSMALLINT', possible loss of data
+  MySqlDatabaseGateway.cpp
+  SimulatedDatabaseGateway.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_dx9.cpp
+  imgui_impl_win32.cpp
+  imgui_widgets.cpp
+  Log.cpp
+  main.cpp
+  ModuleClient.cpp
+c:\users\andreusv2\documents\github\mailing-app\src\moduleclient.cpp(104): warning C4018: '<': signed/unsigned mismatch
+  ModuleLogView.cpp
+  ModuleMainMenu.cpp
+  ModuleServer.cpp
+  ModuleWindow.cpp
+  MemoryStream.cpp
+  SocketUtils.cpp
+  Generating Code...
+c:\users\andreusv2\documents\github\mailing-app\src\moduleserver.cpp(443): warning C4715: 'ModuleServer::getClientStateInfoForSocket': not all control paths return a value
+  MailingApp.vcxproj -> C:\Users\andreusv2\Documents\GitHub\Mailing-App\x64\Debug\MailingApp.exe

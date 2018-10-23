@@ -25,7 +25,9 @@ private:
 
 	void onPacketReceivedQueryAllMessagesResponse(const InputMemoryStream &stream);
 
-	void sendPacketLogin(const char *username);
+	void sendPacketRegister(const char * username, const char * password);
+
+	void sendPacketLogin(const char *username, const char *password);
 
 	void sendPacketQueryMessages();
 
@@ -41,7 +43,7 @@ private:
 
 	// Low-level networking stuff
 
-	void connectToServer();
+	void connectToServer(bool login);
 
 	void disconnectFromServer();
 
@@ -54,7 +56,8 @@ private:
 	enum class ClientState
 	{
 		Disconnected,
-		Connecting,
+		Connecting_Reg,
+		Connecting_Log,
 		Connected,
 		Disconnecting
 	};
@@ -76,6 +79,7 @@ private:
 	enum class MessengerState
 	{
 		SendingLogin,
+		SendingRegister,
 		RequestingMessages,
 		ReceivingMessages,
 		ShowingMessages,
@@ -91,6 +95,7 @@ private:
 
 	// Composing Message buffers (for IMGUI)
 	char senderBuf[64] = "loginName";   // Buffer for the sender
+	char senderPas[64] = "password";
 	char receiverBuf[64]; // Buffer for the receiver
 	char subjectBuf[256]; // Buffer for the subject
 	char messageBuf[4096];// Buffer for the message

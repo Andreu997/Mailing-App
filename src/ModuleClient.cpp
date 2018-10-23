@@ -3,6 +3,10 @@
 #include "imgui/imgui.h"
 #include "serialization/PacketTypes.h"
 
+#include <iostream>
+#include <string>
+#include <functional>
+
 #define HEADER_SIZE sizeof(uint32_t)
 #define RECV_CHUNK_SIZE 4096
 
@@ -12,8 +16,11 @@ bool ModuleClient::update()
 
 	switch (state)
 	{
-	case ModuleClient::ClientState::Connecting:
-		connectToServer();
+	case ModuleClient::ClientState::Connecting_Reg:
+		connectToServer(false);
+		break;
+	case ModuleClient::ClientState::Connecting_Log:
+		connectToServer(true);
 		break;
 	case ModuleClient::ClientState::Connected:
 		handleIncomingData();
@@ -40,8 +47,11 @@ void ModuleClient::updateMessenger()
 {
 	switch (messengerState)
 	{
+	case ModuleClient::MessengerState::SendingRegister:
+		sendPacketRegister(senderBuf, senderPas);
+		break;
 	case ModuleClient::MessengerState::SendingLogin:
-		sendPacketLogin(senderBuf);
+		sendPacketLogin(senderBuf, senderPas);
 		break;
 	case ModuleClient::MessengerState::RequestingMessages:
 		sendPacketQueryMessages();
@@ -108,13 +118,35 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 	messengerState = MessengerState::ShowingMessages;
 }
 
-void ModuleClient::sendPacketLogin(const char * username)
+void ModuleClient::sendPacketRegister(const char * username, const char * password)
+{
+	OutputMemoryStream stream;
+
+	// TODO1: Serialize Login (packet type and username)
+	stream.Write(PacketType::RegisterRequest);
+	stream.Write(std::string(username));
+
+	std::hash<std::string> hash_str;
+	size_t hash = hash_str(password);
+	stream.Write(hash);
+
+	// TODO: Use sendPacket() to send the packet
+	sendPacket(stream);
+
+	messengerState = MessengerState::RequestingMessages;
+}
+
+void ModuleClient::sendPacketLogin(const char * username, const char * password)
 {
 	OutputMemoryStream stream;
 
 	// TODO1: Serialize Login (packet type and username)
 	stream.Write(PacketType::LoginRequest);
 	stream.Write(std::string(username));
+
+	std::hash<std::string> hash_str;
+	size_t hash = hash_str(password);
+	stream.Write(hash);
 
 	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
@@ -188,12 +220,20 @@ void ModuleClient::updateGUI()
 
 			// Connect button
 			ImGui::InputText("Login name", senderBuf, sizeof(senderBuf));
+			ImGui::InputText("Password", senderPas, sizeof(senderPas), ImGuiInputTextFlags_Password | ImGuiInputTextFlags_CharsNoBlank);
 
-			if (ImGui::Button("Connect"))
+			if (ImGui::Button("Login"))
 			{
 				if (state == ClientState::Disconnected)
 				{
-					state = ClientState::Connecting;
+					state = ClientState::Connecting_Log;
+				}
+			}
+			if (ImGui::Button("Register"))
+			{
+				if (state == ClientState::Disconnected)
+				{
+					state = ClientState::Connecting_Reg;
 				}
 			}
 		}
@@ -266,7 +306,7 @@ void ModuleClient::updateGUI()
 
 // Low-level networking stuff...
 
-void ModuleClient::connectToServer()
+void ModuleClient::connectToServer(bool login)
 {
 	// Create socket
 	connSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -292,7 +332,10 @@ void ModuleClient::connectToServer()
 		state = ClientState::Connected;
 		LOG("Server connected to %s:%d", serverIP, serverPort);
 
-		messengerState = MessengerState::SendingLogin;
+		if (login)
+			messengerState = MessengerState::SendingLogin;
+		else
+			messengerState = MessengerState::SendingRegister;
 	}
 
 	// Set non-blocking socket

@@ -30,6 +30,8 @@ private:
 
 	void onPacketReceived(SOCKET socket, const InputMemoryStream& stream);
 
+	void onPacketReceivedRegister(SOCKET socket, const InputMemoryStream& stream);
+
 	void onPacketReceivedLogin(SOCKET socket, const InputMemoryStream& stream);
 
 	void onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream& stream);
@@ -116,6 +118,7 @@ private:
 
 		// Login
 		std::string loginName;
+		size_t passwordHash;
 
 		// bool should it be deleted?
 		bool invalid = false;
