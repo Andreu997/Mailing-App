@@ -6,6 +6,7 @@
 #include <list>
 
 class IDatabaseGateway;
+class MySqlDatabaseGateway;
 
 class ModuleServer : public Module
 {
@@ -129,5 +130,5 @@ private:
 
 	// A gateway to database operations
 	IDatabaseGateway *simulatedDatabaseGateway;
-	IDatabaseGateway *mysqlDatabaseGateway;
+	MySqlDatabaseGateway *mysqlDatabaseGateway;
 };
