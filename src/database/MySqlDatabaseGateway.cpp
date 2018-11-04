@@ -32,6 +32,54 @@ MySqlDatabaseGateway::~MySqlDatabaseGateway()
 {
 }
 
+void MySqlDatabaseGateway::insertProfile(const Profile &profile)
+{
+	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
+
+	if (db.isConnected())
+	{
+		DBResultSet res;
+
+		std::string sqlStatement;
+		// TODO: Create the SQL statement to insert the passed profile into the DB (INSERT)
+		sqlStatement = "INSERT INTO profile (username, password) VALUES ('"
+			+ profile.username + "', '" +
+			profile.password + "', '" + "')";
+		printf(sqlStatement.c_str());
+
+		// insert some messages
+		db.sql(sqlStatement.c_str());
+	}
+}
+
+std::vector<Profile> MySqlDatabaseGateway::getUserPassword(const std::string &username)
+{
+	std::vector<Profile> profiles;
+
+	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
+
+	if (db.isConnected())
+	{
+		std::string sqlStatement;
+		// TODO: Create the SQL statement to query all messages from the given user (SELECT)
+		sqlStatement = "SELECT * FROM messages WHERE username = '" + username + "';";
+
+		// consult all messages
+		DBResultSet res = db.sql(sqlStatement.c_str());
+
+		// fill the array of messages
+		for (auto & profileRow : res.rows)
+		{
+			Profile profile;
+			profile.username = profileRow.columns[0];
+			profile.password = profileRow.columns[1];
+			profiles.push_back(profile);
+		}
+	}
+
+	return profiles;
+}
+
 void MySqlDatabaseGateway::insertMessage(const Message & message)
 {
 	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);

@@ -17,8 +17,10 @@ public:
 	// Virtual methods from IDatabaseGateway
 
 	void insertMessage(const Message &message) override;
-
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
+
+	void insertProfile(const Profile &profile);
+	std::vector<Profile> getUserPassword(const std::string &username);
 
 	virtual void updateGUI() override;
 

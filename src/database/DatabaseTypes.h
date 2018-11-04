@@ -10,3 +10,9 @@ struct Message
 	std::string subject;
 	std::string body;
 };
+
+struct Profile
+{
+	std::string username;
+	std::string password;
+};

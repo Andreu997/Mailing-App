@@ -173,10 +173,7 @@ bool DBConnection::connect(
 	connectionString += "DRIVER={MySQL ODBC 8.0 ANSI Driver};";
 	connectionString += "SERVER=" + std::string(server) + ";";
 	connectionString += "PORT=" + std::string(port) + ";";
-	connectionString += "DATABASE=" + std::string(dataBase) + ";";
-	connectionString += "USER=" + std::string(userName) + ";";
-	connectionString += "PASSWORD=" + std::string(userPassword) + ";";
-	connectionString += "OPTION=3";
+	connectionString += "DATABASE=" + std::string(dataBase) + ";";	connectionString += "OPTION=3";
 
 	// Final connection string (more complete than CONN_STRING
 	// when the user introduces extra info via popup window)
