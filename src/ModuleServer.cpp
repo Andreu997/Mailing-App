@@ -52,11 +52,10 @@ bool ModuleServer::update()
 bool ModuleServer::cleanUp()
 {
 	stopServer();
-
 	return true;
 }
 
-void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & stream)
+int ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & stream)
 {
 	PacketType packetType;
 
@@ -83,30 +82,35 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 		LOG("Unknown packet type received");
 		break;
 	}
+
+	return (int)packetType;
 }
 
 void ModuleServer::onPacketReceivedRegister(SOCKET socket, const InputMemoryStream & stream)
 {
-	std::string loginName;
-	// TODO3: Deserialize the login username into loginName
-	stream.Read(loginName);
 	Profile new_profile;
+
+	// TODO3: Deserialize the login username into loginName
+	std::string loginName;
+	stream.Read(loginName);
 
 	// Password Hash
 	size_t passHash;
 	stream.Read(passHash);
 
-	// Register the client with this socket with the deserialized username
-	ClientStateInfo & client = getClientStateInfoForSocket(socket);
-	client.loginName = loginName;
-	new_profile.username = loginName;
+	if (database()->getUserPassword(loginName) == 0)
+	{
+		// Register the client with this socket with the deserialized username
+		ClientStateInfo & client = getClientStateInfoForSocket(socket);
+		client.loginName = loginName;
+		new_profile.username = loginName;
 
-	// And password Hash
-	client.passwordHash = passHash;
-	new_profile.password = passHash;
+		// And password Hash
+		client.passwordHash = passHash;
+		new_profile.password = passHash;
 
-
-	mysqlDatabaseGateway->insertProfile(new_profile);
+		database()->insertProfile(new_profile);
+	}
 }
 
 void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream & stream)
@@ -380,11 +384,22 @@ void ModuleServer::handleIncomingDataFromClient(ClientStateInfo & info)
 				InputMemoryStream stream(packetSize - HEADER_SIZE);
 				//std::copy(&info.recvBuffer[info.recvPacketHead + HEADER_SIZE], &info.recvBuffer[info.recvPacketHead + packetSize], (uint8_t*)stream.GetBufferPtr());
 				memcpy(stream.GetBufferPtr(), &info.recvBuffer[info.recvPacketHead + HEADER_SIZE], packetSize - HEADER_SIZE);
-				onPacketReceived(info.socket, stream);
+				int packetType = onPacketReceived(info.socket, stream);
+
 				if (info.loginName == "<pending login>")
 				{
-					printWSError("recv() - Error: Disconnecting client");
-					LOG("recv() - Error: Disconnecting client: User not registered");
+					if (packetType == (int)PacketType::RegisterRequest)
+					{
+						printWSError("recv() - Error: Disconnecting client");
+						LOG("recv() - Error: Disconnecting client: User already registered");
+					}
+
+					else if (packetType == (int)PacketType::LoginRequest)
+					{
+						printWSError("recv() - Error: Disconnecting client");
+						LOG("recv() - Error: Disconnecting client: User not registered or incorrect password");
+					}
+
 					info.invalid = true;
 					return;
 				}

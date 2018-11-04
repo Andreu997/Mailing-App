@@ -29,7 +29,7 @@ private:
 
 	// Methods involving serialization / deserialization (contain TODOs)
 
-	void onPacketReceived(SOCKET socket, const InputMemoryStream& stream);
+	int onPacketReceived(SOCKET socket, const InputMemoryStream& stream);
 
 	void onPacketReceivedRegister(SOCKET socket, const InputMemoryStream& stream);
 
