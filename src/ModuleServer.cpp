@@ -381,8 +381,13 @@ void ModuleServer::handleIncomingDataFromClient(ClientStateInfo & info)
 				//std::copy(&info.recvBuffer[info.recvPacketHead + HEADER_SIZE], &info.recvBuffer[info.recvPacketHead + packetSize], (uint8_t*)stream.GetBufferPtr());
 				memcpy(stream.GetBufferPtr(), &info.recvBuffer[info.recvPacketHead + HEADER_SIZE], packetSize - HEADER_SIZE);
 				onPacketReceived(info.socket, stream);
-				if (!info.socket)
+				if (info.loginName == "<pending login>")
+				{
+					printWSError("recv() - Error: Disconnecting client");
+					LOG("recv() - Error: Disconnecting client: User not registered");
+					info.invalid = true;
 					return;
+				}
 				info.recvPacketHead += packetSize;
 			}
 		}
@@ -455,7 +460,7 @@ ModuleServer::ClientStateInfo & ModuleServer::getClientStateInfoForSocket(SOCKET
 		}
 	}
 
-	assert(nullptr && "The client for this socket does not exist.");
+	//assert(nullptr && "The client for this socket does not exist.");
 }
 
 bool ModuleServer::existsClientStateInfoForSocket(SOCKET s)
