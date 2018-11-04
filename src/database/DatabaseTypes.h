@@ -14,5 +14,5 @@ struct Message
 struct Profile
 {
 	std::string username;
-	std::string password;
+	unsigned int password;
 };

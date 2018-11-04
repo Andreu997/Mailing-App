@@ -4,7 +4,7 @@
 #include "serialization/PacketTypes.h"
 #include "database/MySqlDatabaseGateway.h"
 #include "database/SimulatedDatabaseGateway.h"
-
+#include "database/DatabaseTypes.h"
 
 static bool g_SimulateDatabaseConnection = true;
 
@@ -90,6 +90,7 @@ void ModuleServer::onPacketReceivedRegister(SOCKET socket, const InputMemoryStre
 	std::string loginName;
 	// TODO3: Deserialize the login username into loginName
 	stream.Read(loginName);
+	Profile new_profile;
 
 	// Password Hash
 	size_t passHash;
@@ -98,9 +99,14 @@ void ModuleServer::onPacketReceivedRegister(SOCKET socket, const InputMemoryStre
 	// Register the client with this socket with the deserialized username
 	ClientStateInfo & client = getClientStateInfoForSocket(socket);
 	client.loginName = loginName;
+	new_profile.username = loginName;
 
 	// And password Hash
 	client.passwordHash = passHash;
+	new_profile.password = passHash;
+
+
+	mysqlDatabaseGateway->insertProfile(new_profile);
 }
 
 void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream & stream)
@@ -113,12 +119,19 @@ void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream 
 	size_t passHash;
 	stream.Read(passHash);
 
-	// Register the client with this socket with the deserialized username
-	ClientStateInfo & client = getClientStateInfoForSocket(socket);
-	client.loginName = loginName;
+	size_t correct_password = mysqlDatabaseGateway->getUserPassword(loginName);
+	bool success = (correct_password == passHash);
+		// Register the client with this socket with the deserialized username
+	if(success)
+	{
+		ClientStateInfo & client = getClientStateInfoForSocket(socket);
+		client.loginName = loginName;
 
-	// And password Hash
-	client.passwordHash = passHash;
+			// And password Hash
+		client.passwordHash = passHash;
+	}
+	
+
 }
 
 void ModuleServer::onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream & stream)
@@ -367,6 +380,8 @@ void ModuleServer::handleIncomingDataFromClient(ClientStateInfo & info)
 				//std::copy(&info.recvBuffer[info.recvPacketHead + HEADER_SIZE], &info.recvBuffer[info.recvPacketHead + packetSize], (uint8_t*)stream.GetBufferPtr());
 				memcpy(stream.GetBufferPtr(), &info.recvBuffer[info.recvPacketHead + HEADER_SIZE], packetSize - HEADER_SIZE);
 				onPacketReceived(info.socket, stream);
+				if (!info.socket)
+					return;
 				info.recvPacketHead += packetSize;
 			}
 		}
