@@ -22,7 +22,7 @@ public:
 
 	virtual void insertProfile(const Profile &profile) = 0;
 
-	virtual unsigned int getUserPassword(const std::string &username) = 0;
+	virtual size_t getUserPassword(const std::string &username) = 0;
 
 	virtual void updateGUI() { }
 };

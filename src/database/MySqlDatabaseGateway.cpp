@@ -54,7 +54,7 @@ void MySqlDatabaseGateway::insertProfile(const Profile &profile)
 	}
 }
 
-unsigned int MySqlDatabaseGateway::getUserPassword(const std::string &username)
+size_t MySqlDatabaseGateway::getUserPassword(const std::string &username)
 {
 	Profile profile;
 

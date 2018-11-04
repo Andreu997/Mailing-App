@@ -34,9 +34,9 @@ void SimulatedDatabaseGateway::insertProfile(const Profile &profile)
 	allProfiles.push_back(profile);
 }
 
-unsigned int SimulatedDatabaseGateway::getUserPassword(const std::string &username)
+size_t SimulatedDatabaseGateway::getUserPassword(const std::string &username)
 {
-	unsigned int ret = 0;
+	size_t ret = 0;
 
 	std::vector<Profile> profiles;
 	for (const auto & profile : allProfiles)
