@@ -1,1 +1,20 @@
-﻿  MailingApp.vcxproj -> C:\Users\marcd\Documents\GitHub\Mailing-App\x64\Debug\MailingApp.exe
+﻿  Application.cpp
+  ModuleClient.cpp
+c:\users\marcd\documents\github\mailing-app\src\moduleclient.cpp(104): warning C4018: '<': signed/unsigned mismatch
+  ModuleMainMenu.cpp
+  ModuleServer.cpp
+  MySqlDatabaseGateway.cpp
+c:\users\marcd\documents\github\mailing-app\src\database\mysqldatabasegateway.cpp(72): warning C4311: 'type cast': pointer truncation from '_Ty *' to 'unsigned int'
+          with
+          [
+              _Ty=DBResultColumn
+          ]
+c:\users\marcd\documents\github\mailing-app\src\database\mysqldatabasegateway.cpp(72): warning C4302: 'type cast': truncation from '_Ty *' to 'unsigned int'
+          with
+          [
+              _Ty=DBResultColumn
+          ]
+  SimulatedDatabaseGateway.cpp
+  Generating Code...
+c:\users\marcd\documents\github\mailing-app\src\moduleserver.cpp(443): warning C4715: 'ModuleServer::getClientStateInfoForSocket': not all control paths return a value
+  MailingApp.vcxproj -> C:\Users\marcd\Documents\GitHub\Mailing-App\x64\Debug\MailingApp.exe

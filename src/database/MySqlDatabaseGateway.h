@@ -20,7 +20,7 @@ public:
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
 
 	void insertProfile(const Profile &profile);
-	std::vector<Profile> getUserPassword(const std::string &username);
+	unsigned int getUserPassword(const std::string &username);
 
 	virtual void updateGUI() override;
 
