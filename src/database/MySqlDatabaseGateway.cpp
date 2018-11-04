@@ -44,7 +44,8 @@ void MySqlDatabaseGateway::insertProfile(const Profile &profile)
 
 		// TODO: Create the SQL statement to insert the passed username into the DB (INSERT)
 		sqlStatement = "INSERT INTO profile (username, password) VALUES ('"
-			+ profile.username + (char) profile.password + "')";
+			+ profile.username + "', '" + 
+			(char) profile.password + "')";;
 
 		printf(sqlStatement.c_str());
 
@@ -58,7 +59,7 @@ unsigned int MySqlDatabaseGateway::getUserPassword(const std::string &username)
 	Profile profile;
 
 	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
-
+	
 	if (db.isConnected())
 	{
 		std::string sqlStatement;
@@ -78,7 +79,7 @@ unsigned int MySqlDatabaseGateway::getUserPassword(const std::string &username)
 void MySqlDatabaseGateway::insertMessage(const Message & message)
 {
 	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
-
+	
 	if (db.isConnected())
 	{
 		DBResultSet res;
@@ -89,7 +90,7 @@ void MySqlDatabaseGateway::insertMessage(const Message & message)
 			+ message.senderUsername + "', '" +
 			message.receiverUsername + "', '" +
 			message.subject + "', '" +
-			message.body + "', '" + "')";
+			message.body + "')";
 		printf(sqlStatement.c_str());
 
 		// insert some messages

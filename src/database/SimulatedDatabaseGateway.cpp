@@ -28,3 +28,21 @@ std::vector<Message> SimulatedDatabaseGateway::getAllMessagesReceivedByUser(cons
 	}
 	return messages;
 }
+
+void SimulatedDatabaseGateway::insertProfile(const Profile &profile)
+{
+	allProfiles.push_back(profile);
+}
+
+unsigned int SimulatedDatabaseGateway::getUserPassword(const std::string &username)
+{
+	std::vector<Profile> profiles;
+	for (const auto & profile : allProfiles)
+	{
+		if (profile.username == username)
+		{
+			return profile.password;
+		}
+	}
+
+}

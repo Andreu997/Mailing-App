@@ -119,7 +119,8 @@ void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream 
 	size_t passHash;
 	stream.Read(passHash);
 
-	size_t correct_password = mysqlDatabaseGateway->getUserPassword(loginName);
+	size_t correct_password = database()->getUserPassword(loginName);
+
 	bool success = (correct_password == passHash);
 		// Register the client with this socket with the deserialized username
 	if(success)

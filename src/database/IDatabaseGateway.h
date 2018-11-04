@@ -20,6 +20,10 @@ public:
 
 	virtual std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) = 0;
 
+	virtual void insertProfile(const Profile &profile) = 0;
+
+	virtual unsigned int getUserPassword(const std::string &username) = 0;
+
 	virtual void updateGUI() { }
 };
 

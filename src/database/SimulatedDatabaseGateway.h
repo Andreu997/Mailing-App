@@ -21,7 +21,12 @@ public:
 
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
 
+	void insertProfile(const Profile &profile) override;
+
+	unsigned int getUserPassword(const std::string &username) override;
+
 private:
 
 	std::vector<Message> allMessages;
+	std::vector<Profile> allProfiles;
 };

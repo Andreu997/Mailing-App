@@ -19,8 +19,8 @@ public:
 	void insertMessage(const Message &message) override;
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
 
-	void insertProfile(const Profile &profile);
-	unsigned int getUserPassword(const std::string &username);
+	void insertProfile(const Profile &profile) override;
+	unsigned int getUserPassword(const std::string &username) override;
 
 	virtual void updateGUI() override;
 
